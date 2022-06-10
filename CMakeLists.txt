@@ -58,6 +58,7 @@ target_include_directories(qtpropertybrowser PUBLIC
         $<INSTALL_INTERFACE:include>
         PRIVATE
         ${PROJECT_SOURCE_DIR}/include/qtpropertybrowser
+        ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}/src
         ${CMAKE_BINARY_DIR}/include
         )
