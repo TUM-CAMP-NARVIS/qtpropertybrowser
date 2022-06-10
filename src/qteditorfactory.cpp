@@ -39,8 +39,8 @@
 ****************************************************************************/
 
 
-#include "qteditorfactory.h"
-#include "qtpropertybrowserutils_p.h"
+#include "qtpropertybrowser/qteditorfactory.h"
+#include "qtpropertybrowser/qtpropertybrowserutils_p.h"
 #include <QSpinBox>
 #include <QScrollBar>
 #include <QComboBox>

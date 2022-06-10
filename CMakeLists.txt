@@ -10,6 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+#tmp
+set(CMAKE_MODULE_PATH ${PROJECT_BINARY_DIR})
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
@@ -25,14 +27,14 @@ set(APP_SRC
 )
 
 set(APP_HDR
-    src/qtpropertybrowser.h
-    src/qtpropertymanager.h
-    src/qteditorfactory.h
-    src/qtvariantproperty.h
-    src/qttreepropertybrowser.h
-    src/qtbuttonpropertybrowser.h
-    src/qtgroupboxpropertybrowser.h
-    src/qtpropertybrowserutils_p.h
+        include/qtpropertybrowser/qtpropertybrowser.h
+        include/qtpropertybrowser/qtpropertymanager.h
+        include/qtpropertybrowser/qteditorfactory.h
+        include/qtpropertybrowser/qtvariantproperty.h
+        include/qtpropertybrowser/qttreepropertybrowser.h
+        include/qtpropertybrowser/qtbuttonpropertybrowser.h
+        include/qtpropertybrowser/qtgroupboxpropertybrowser.h
+        include/qtpropertybrowser/qtpropertybrowserutils_p.h
     )
 
 set(APP_RSC
@@ -54,8 +56,17 @@ target_link_libraries(qtpropertybrowser
     Qt5::Widgets
 )
 
+target_include_directories(qtpropertybrowser PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>/include
+        $<INSTALL_INTERFACE:include>
+        PRIVATE
+        ${PROJECT_SOURCE_DIR}/include/qtpropertybrowser
+        ${PROJECT_BINARY_DIR}/src
+        ${CMAKE_BINARY_DIR}/include
+        )
+
 install(TARGETS qtpropertybrowser EXPORT ringbufferConfig
     ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})  # This is for Windows
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/src DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/qtpropertybrowser DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

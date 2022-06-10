@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 
-#include "qtgroupboxpropertybrowser.h"
+#include "qtpropertybrowser/qtgroupboxpropertybrowser.h"
 #include <QSet>
 #include <QGridLayout>
 #include <QLabel>

@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 
-#include "qtbuttonpropertybrowser.h"
+#include "qtpropertybrowser/qtbuttonpropertybrowser.h"
 #include <QSet>
 #include <QGridLayout>
 #include <QLabel>

@@ -39,8 +39,8 @@
 ****************************************************************************/
 
 
-#include "qtpropertymanager.h"
-#include "qtpropertybrowserutils_p.h"
+#include "qtpropertybrowser/qtpropertymanager.h"
+#include "qtpropertybrowser/qtpropertybrowserutils_p.h"
 #include <QDateTime>
 #include <QLocale>
 #include <QMap>

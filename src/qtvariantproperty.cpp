@@ -39,9 +39,9 @@
 ****************************************************************************/
 
 
-#include "qtvariantproperty.h"
-#include "qtpropertymanager.h"
-#include "qteditorfactory.h"
+#include "qtpropertybrowser/qtvariantproperty.h"
+#include "qtpropertybrowser/qtpropertymanager.h"
+#include "qtpropertybrowser/qteditorfactory.h"
 #include <QVariant>
 #include <QIcon>
 #include <QDate>
