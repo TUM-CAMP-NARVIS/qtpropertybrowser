@@ -1,78 +1,54 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the Qt Solutions component.
+** This file is part of the tools applications of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
 **
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 3 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 3 requirements
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 **
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
 **
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
-
 #ifndef QTPROPERTYBROWSER_H
 #define QTPROPERTYBROWSER_H
 
-#include <QWidget>
-#include <QSet>
-#include <QLineEdit>
-#include <QRegularExpression>
+#include <QtWidgets/QWidget>
+#include <QtCore/QSet>
 
-#if QT_VERSION >= 0x040400
 QT_BEGIN_NAMESPACE
-#endif
-
-#if defined(Q_OS_WIN)
-#  if !defined(QT_QTPROPERTYBROWSER_EXPORT) && !defined(QT_QTPROPERTYBROWSER_IMPORT)
-#    define QT_QTPROPERTYBROWSER_EXPORT
-#  elif defined(QT_QTPROPERTYBROWSER_IMPORT)
-#    if defined(QT_QTPROPERTYBROWSER_EXPORT)
-#      undef QT_QTPROPERTYBROWSER_EXPORT
-#    endif
-#    define QT_QTPROPERTYBROWSER_EXPORT __declspec(dllimport)
-#  elif defined(QT_QTPROPERTYBROWSER_EXPORT)
-#    undef QT_QTPROPERTYBROWSER_EXPORT
-#    define QT_QTPROPERTYBROWSER_EXPORT __declspec(dllexport)
-#  endif
-#else
-#  define QT_QTPROPERTYBROWSER_EXPORT
-#endif
-
-typedef QLineEdit::EchoMode EchoMode;
 
 class QtAbstractPropertyManager;
 class QtPropertyPrivate;
 
-class QT_QTPROPERTYBROWSER_EXPORT QtProperty
+class QtProperty
 {
 public:
     virtual ~QtProperty();
@@ -81,7 +57,9 @@ public:
 
     QtAbstractPropertyManager *propertyManager() const;
 
-    QString toolTip() const;
+    QString toolTip() const { return valueToolTip(); } // Compatibility
+    QString valueToolTip() const;
+    QString descriptionToolTip() const;
     QString statusTip() const;
     QString whatsThis() const;
     QString propertyName() const;
@@ -91,9 +69,10 @@ public:
     bool hasValue() const;
     QIcon valueIcon() const;
     QString valueText() const;
-    QString displayText() const;
 
-    void setToolTip(const QString &text);
+    void setToolTip(const QString &text) { setValueToolTip(text); }  // Compatibility
+    void setValueToolTip(const QString &text);
+    void setDescriptionToolTip(const QString &text);
     void setStatusTip(const QString &text);
     void setWhatsThis(const QString &text);
     void setPropertyName(const QString &text);
@@ -108,12 +87,12 @@ protected:
     void propertyChanged();
 private:
     friend class QtAbstractPropertyManager;
-    QtPropertyPrivate *d_ptr;
+    QScopedPointer<QtPropertyPrivate> d_ptr;
 };
 
 class QtAbstractPropertyManagerPrivate;
 
-class QT_QTPROPERTYBROWSER_EXPORT QtAbstractPropertyManager : public QObject
+class QtAbstractPropertyManager : public QObject
 {
     Q_OBJECT
 public:
@@ -136,19 +115,17 @@ protected:
     virtual bool hasValue(const QtProperty *property) const;
     virtual QIcon valueIcon(const QtProperty *property) const;
     virtual QString valueText(const QtProperty *property) const;
-    virtual QString displayText(const QtProperty *property) const;
-    virtual EchoMode echoMode(const QtProperty *) const;
     virtual void initializeProperty(QtProperty *property) = 0;
     virtual void uninitializeProperty(QtProperty *property);
     virtual QtProperty *createProperty();
 private:
     friend class QtProperty;
-    QtAbstractPropertyManagerPrivate *d_ptr;
+    QScopedPointer<QtAbstractPropertyManagerPrivate> d_ptr;
     Q_DECLARE_PRIVATE(QtAbstractPropertyManager)
-    Q_DISABLE_COPY(QtAbstractPropertyManager)
+    Q_DISABLE_COPY_MOVE(QtAbstractPropertyManager)
 };
 
-class QT_QTPROPERTYBROWSER_EXPORT QtAbstractEditorFactoryBase : public QObject
+class QtAbstractEditorFactoryBase : public QObject
 {
     Q_OBJECT
 public:
@@ -169,11 +146,9 @@ class QtAbstractEditorFactory : public QtAbstractEditorFactoryBase
 {
 public:
     explicit QtAbstractEditorFactory(QObject *parent) : QtAbstractEditorFactoryBase(parent) {}
-    QWidget *createEditor(QtProperty *property, QWidget *parent)
+    QWidget *createEditor(QtProperty *property, QWidget *parent) override
     {
-        QSetIterator<PropertyManager *> it(m_managers);
-        while (it.hasNext()) {
-            PropertyManager *manager = it.next();
+        for (PropertyManager *manager : qAsConst(m_managers)) {
             if (manager == property->propertyManager()) {
                 return createEditor(manager, property, parent);
             }
@@ -205,9 +180,7 @@ public:
     PropertyManager *propertyManager(QtProperty *property) const
     {
         QtAbstractPropertyManager *manager = property->propertyManager();
-        QSetIterator<PropertyManager *> itManager(m_managers);
-        while (itManager.hasNext()) {
-            PropertyManager *m = itManager.next();
+        for (PropertyManager *m : qAsConst(m_managers)) {
             if (m == manager) {
                 return m;
             }
@@ -219,11 +192,9 @@ protected:
     virtual QWidget *createEditor(PropertyManager *manager, QtProperty *property,
                 QWidget *parent) = 0;
     virtual void disconnectPropertyManager(PropertyManager *manager) = 0;
-    void managerDestroyed(QObject *manager)
+    void managerDestroyed(QObject *manager) override
     {
-        QSetIterator<PropertyManager *> it(m_managers);
-        while (it.hasNext()) {
-            PropertyManager *m = it.next();
+        for (PropertyManager *m : qAsConst(m_managers)) {
             if (m == manager) {
                 m_managers.remove(m);
                 return;
@@ -231,11 +202,9 @@ protected:
         }
     }
 private:
-    void breakConnection(QtAbstractPropertyManager *manager)
+    void breakConnection(QtAbstractPropertyManager *manager) override
     {
-        QSetIterator<PropertyManager *> it(m_managers);
-        while (it.hasNext()) {
-            PropertyManager *m = it.next();
+        for (PropertyManager *m : qAsConst(m_managers)) {
             if (m == manager) {
                 removePropertyManager(m);
                 return;
@@ -250,7 +219,7 @@ private:
 class QtAbstractPropertyBrowser;
 class QtBrowserItemPrivate;
 
-class QT_QTPROPERTYBROWSER_EXPORT QtBrowserItem
+class QtBrowserItem
 {
 public:
     QtProperty *property() const;
@@ -260,13 +229,13 @@ public:
 private:
     explicit QtBrowserItem(QtAbstractPropertyBrowser *browser, QtProperty *property, QtBrowserItem *parent);
     ~QtBrowserItem();
-    QtBrowserItemPrivate *d_ptr;
+    QScopedPointer<QtBrowserItemPrivate> d_ptr;
     friend class QtAbstractPropertyBrowserPrivate;
 };
 
 class QtAbstractPropertyBrowserPrivate;
 
-class QT_QTPROPERTYBROWSER_EXPORT QtAbstractPropertyBrowser : public QWidget
+class QtAbstractPropertyBrowser : public QWidget
 {
     Q_OBJECT
 public:
@@ -317,9 +286,9 @@ private:
     bool addFactory(QtAbstractPropertyManager *abstractManager,
                 QtAbstractEditorFactoryBase *abstractFactory);
 
-    QtAbstractPropertyBrowserPrivate *d_ptr;
+    QScopedPointer<QtAbstractPropertyBrowserPrivate> d_ptr;
     Q_DECLARE_PRIVATE(QtAbstractPropertyBrowser)
-    Q_DISABLE_COPY(QtAbstractPropertyBrowser)
+    Q_DISABLE_COPY_MOVE(QtAbstractPropertyBrowser)
     Q_PRIVATE_SLOT(d_func(), void slotPropertyInserted(QtProperty *,
                             QtProperty *, QtProperty *))
     Q_PRIVATE_SLOT(d_func(), void slotPropertyRemoved(QtProperty *,
@@ -329,8 +298,6 @@ private:
 
 };
 
-#if QT_VERSION >= 0x040400
 QT_END_NAMESPACE
-#endif
 
 #endif // QTPROPERTYBROWSER_H
