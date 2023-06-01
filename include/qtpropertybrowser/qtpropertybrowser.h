@@ -45,6 +45,7 @@
 #include <QWidget>
 #include <QSet>
 #include <QLineEdit>
+#include <QRegularExpression>
 
 #if QT_VERSION >= 0x040400
 QT_BEGIN_NAMESPACE
