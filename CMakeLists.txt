@@ -4,7 +4,7 @@ project(qtpropertybrowswer)
 
 include(GNUInstallDirs)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
@@ -45,7 +45,7 @@ add_library(qtpropertybrowser
     ${APP_RSC}
 )
 
-set_property(TARGET qtpropertybrowser PROPERTY CXX_STANDARD 11)
+set_property(TARGET qtpropertybrowser PROPERTY CXX_STANDARD 17)
 set_target_properties(qtpropertybrowser PROPERTIES LINKER_LANGUAGE CXX)
 
 
